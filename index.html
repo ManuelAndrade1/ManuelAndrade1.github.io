@@ -8,15 +8,31 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Lato:wght@100;300;400&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/52905a6ad8.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<header class="head">
 			<h1 class="head-title">Personal Portfolio</h1>
 			<nav class="head-nav">
-				<ul class="nav-links">
-					<li class="nav-items">Home</li>
-					<li class="nav-items">Projects</li>
-					<li class="nav-items">Contact</li>
+				<ul class="nav-list">
+					<li class="nav-items">
+						<a class="internal-link"
+						href="#home-section">
+							Home
+						</a>
+					</li>
+					<li class="nav-items">
+						<a class="internal-link"
+						href="#project-section">
+							Projects
+						</a>
+					</li>					
+					<li class="nav-items">
+						<a class="internal-link"
+						href="#contact-information">
+							Contact
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</header>
@@ -44,10 +60,6 @@
 					</h2>
 				</div>
 				<div class="projects-container">
-				<!--
-				Add icons to go to the project websites.
-				First basic css, no animations nor descriptions
-				-->
 				<figure class="project-figure">	
 					<img class="project-icon"
 					src=".\assets\images\tribute-page.PNG">
@@ -92,11 +104,35 @@
 				</figure>
 				</div>
 			</section>
-			<section id="contact-information" class="main-section">
-				<h2>Let's work together!</h2>
-				<h3>
+			<section id="contact-information" 
+			class="main-section">
+				<h2 class="section-title">Let's work together!
+				</h2>
+				<h3 class="section-subtitle">
 				Find me on these platforms
 				</h3>
+				<section class="social-media">
+					<a class="media-link" 
+					target="_blank"
+					href="https://www.linkedin.com/in/andrademanuel/">
+						<i class="icon fab fa-linkedin-in fa-4x"></i>
+					</a>
+					<a class="media-link"
+					target="_blank"
+					href="https://www.instagram.com/manuandrade6/">
+						<i class=" icon fab fa-instagram fa-4x"></i>
+					</a>
+					<a class="media-link"
+					target="_blank"
+					href="https://github.com/ManuelAndrade1">
+						<i class=" icon fa-brands fa-github fa-4x"></i>
+					</a>
+					<a class="media-link"
+					target="_blank"
+					href="mailto:themanuelandrade1@gmail.com?subject=Reaching%20out%20from%20your%20website">
+						<i class=" icon fa-solid fa-envelope fa-4x"></i>
+					</a>
+				</section>
 			</section>
 		</main>
 		<footer>
