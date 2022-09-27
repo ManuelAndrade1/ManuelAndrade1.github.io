@@ -42,11 +42,11 @@ for (let i = 0; i < N; i++) {
 		// temp.setAttribute('placeholder', '0');
 		temp.setAttribute('max','9');
 		temp.setAttribute('min', '1');
-		temp.addEventListener('keyup', (event) => {
-			if (event.key !== 'Enter' || event.keyCode !== 13) return;
-			validateInput(temp);
-		});
 		temp.addEventListener('focusout', () => validateInput(temp));
+		temp.addEventListener('keydown', (event) => {
+			if (event.key === "0") event.preventDefault();
+			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
+		});
 		temp.style.height = standardMeasure;
 		temp.style.width = standardMeasure;
 		temp.style.fontSize = `${standardMeasure * .75}px`;
@@ -55,7 +55,7 @@ for (let i = 0; i < N; i++) {
 	}
 } 
 
-if (!('ontouchsart' in document.documentElement))
+if (!(window.matchMedia("only screen and min-width(400px)").matches))
 {
 	window.onresize = () => {
 		height = document.body.clientHeight * .75;

@@ -95,4 +95,6 @@ input::-webkit-inner-spin-button {
 
 .cell:focus {
 	background-color: rgba(200, 200, 0, 0.5);
+	color: transparent;
+	text-shadow:  0 0 0 #000;
 }
