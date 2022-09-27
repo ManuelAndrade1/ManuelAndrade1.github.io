@@ -55,7 +55,7 @@ for (let i = 0; i < N; i++) {
 	}
 } 
 
-if (!(window.matchMedia("only screen and min-width(400px)").matches))
+if (!(window.matchMedia("only screen and (max-width:400px)").matches))
 {
 	window.onresize = () => {
 		height = document.body.clientHeight * .75;
