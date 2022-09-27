@@ -55,18 +55,21 @@ for (let i = 0; i < N; i++) {
 	}
 } 
 
-window.onresize = () => {
-	height = document.body.clientHeight * .75;
-	width = document.body.clientWidth;
-	standardMeasure = (width > height) ? height / N : width / N;
-	fString = `repeat(${N}, ${standardMeasure}px)`;
-	container.style.gridTemplateColumns = fString;
-	container.style.gridTemplateRows = fString;
-	container.style.width = (width > height) ? height : width;
-	container.style.height = (width > height) ? height : width;
-	for(let i = 0; i < SIZE; i++) {
-		cellArray[i].element.style.height = standardMeasure;
-		cellArray[i].element.style.width = standardMeasure;
-		cellArray[i].element.style.fontSize = `${standardMeasure * .75}px`;
+if (!('ontouchsart' in document.documentElement))
+{
+	window.onresize = () => {
+		height = document.body.clientHeight * .75;
+		width = document.body.clientWidth;
+		standardMeasure = (width > height) ? height / N : width / N;
+		fString = `repeat(${N}, ${standardMeasure}px)`;
+		container.style.gridTemplateColumns = fString;
+		container.style.gridTemplateRows = fString;
+		container.style.width = (width > height) ? height : width;
+		container.style.height = (width > height) ? height : width;
+		for(let i = 0; i < SIZE; i++) {
+			cellArray[i].element.style.height = standardMeasure;
+			cellArray[i].element.style.width = standardMeasure;
+			cellArray[i].element.style.fontSize = `${standardMeasure * .75}px`;
+		};
 	};
-};
+}
