@@ -1,1 +1,2 @@
-localStorage.setItem('key', 'value');
+
+console.log("Hello, world!");
