@@ -80,7 +80,6 @@ table {
 .container {
 	margin: auto;
 	margin-top: 1.25%;
-	background-color: rgba(0, 0, 255, 0.5);
 	display: grid;
 }
 
@@ -92,4 +91,8 @@ input::-webkit-inner-spin-button {
 .cell {
 	border: 1px solid black;
 	text-align: center;
+}
+
+.cell:focus {
+	background-color: rgba(200, 200, 0, 0.5);
 }
