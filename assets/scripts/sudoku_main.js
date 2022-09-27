@@ -8,7 +8,7 @@ class Cell {
 
 function validateInput(obj) {
 	let value = parseInt(obj.value);
-	obj.value = (value > 0 && value <= 9) ? value : 0;
+	obj.value = (value > 0 && value <= 9) ? value : '';
 
 }
 const SIZE = 81; // Total number of cells in the grid
@@ -39,7 +39,7 @@ for (let i = 0; i < N; i++) {
 		let temp = document.createElement('input');
 		temp.setAttribute('class', 'cell');
 		temp.setAttribute('type', 'number');
-		temp.setAttribute('placeholder', '0');
+		// temp.setAttribute('placeholder', '0');
 		temp.setAttribute('max','9');
 		temp.setAttribute('min', '1');
 		temp.addEventListener('keyup', (event) => {
