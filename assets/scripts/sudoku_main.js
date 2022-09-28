@@ -25,7 +25,32 @@ const GRIDS = {
 				"",
 				],
 			],
+	solvedGrids: 
+			[
+				[
+				"",
+				"",
+				"",
+				"",
+				"",
+				],
+				[			
+				"",
+				"",
+				"",
+				"",
+				"",
+				],
+				[			
+				"",
+				"",
+				"",
+				"",
+				"",
+				],
+			],
 	load: function(diff, num){return this.loadedGrids[diff][num]},
+	loadSolve: function (diff, num) {return this.solvedGrids[diff][num]},
 };
 const HELPER = {
 	findGroup: function(cord) {
@@ -94,14 +119,41 @@ const HELPER = {
 		let max = Math.max(...transform);
 		let index = transform.indexOf(max);
 		return empty[index];
+	},
+	createEmpty: function() {
+		let arr = [];
+		for(let i = 0; i < N; i++) {
+			let subArr = [];
+			for(let j = 0; j < N; j++) {
+				subArr.push(0);
+			}
+			arr.push(subArr);
+		}
+	return arr;
 	}
 }
 class AI {
-	constructor(puzzle) {
+	constructor(puzzle, solvedPuzzle) {
 		this.puzzle = puzzle;
-		this.solvedPuzzle = [];
+		this.solvedPuzzle = solvedPuzzle;
+		this.tries = 0;
 	}
-	solve() {
+	reset() {
+		this.tries = 0;
+		for(let i = 0; i < N; i++){
+			for(let j = 0; j < N; j++){
+				let list = [...this.puzzle[i][j].element.classList];
+				if(list.includes('solution')){
+					this.puzzle[i][j].element.value = '';
+					this.puzzle[i][j].element.classList.remove('solution');
+					this.puzzle[i][j].element.removeAttribute('disabled');
+					this.puzzle[i][j].value = 0;
+				}
+			}
+		}		
+	}
+	async solve() {
+		this.tries++;
 		// Recursive Function
 		if (HELPER.puzzleSolved(this.puzzle)) {
 			return true;
@@ -114,16 +166,22 @@ class AI {
 			cell.value = a;
 			cell.element.value = a;
 			cell.element.classList.add('temp-solution');
-			let results = this.solve();
+			/*
+			The following code is based on the example here
+			https://thewebdev.info/2022/05/15/how-to-get-return-value-from-settimeout-with-javascript/ 
+			*/
+			let promise = new Promise((resolve, reject) => {
+				setTimeout(() =>{resolve(this.solve())}, 20);
+			});
+			let results = await(promise);
 			if (results) {
-				this.solvedPuzzle = this.puzzle;
 				cell.element.classList.remove('temp-solution');
 				cell.element.classList.add('solution');
 				return true;
 			}
 			else {
 				cell.value = 0;
-				cell.element.value = 0;
+				cell.element.value = '';
 				cell.element.classList.remove('temp-solution');
 				continue;
 			}
@@ -142,7 +200,7 @@ class Cell {
 
 function validateInput(obj) {
 	//Validates user input
-	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
+	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : '';
 }
 const SIZE = 81; // Total number of cells in the grid
 const N = 9; // Amount of rows & cols
@@ -171,12 +229,17 @@ container.style.gridTemplateRows = fString;
 
 // Creates array of Cells
 let game = GRIDS.load(0, 4);
+let solution = GRIDS.loadSolve(0, 4);
+let solutionArray = [];
 let cellArray = [];
+let handler = new AI(cellArray, solutionArray);
 for (let i = 0; i < N; i++) {
 	let subArray = [];
+	let subSol = [];
 	for (let j = 0; j < N; j++) {
 		let temp = document.createElement('input');
-
+		let solValue = parseInt(solution[i * N + j]);
+		subSol.push(solValue);
 		// Loads the Sudoku puzzle onto the screen
 		let loadedValue = parseInt(game[i * N + j]);
 		if (loadedValue) {
@@ -191,8 +254,12 @@ for (let i = 0; i < N; i++) {
 		temp.setAttribute('min', '1');
 		temp.addEventListener('focusout', () => validateInput(newCell));
 		temp.addEventListener('keydown', (event) => {
-			if (event.key === "0" || event.key === "e" || event.key === "-") event.preventDefault();
+			let notValid = (event.key === "0" || event.key === "e" || event.key === "-" || event.key === ".");
+			if (notValid) event.preventDefault();
 			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
+		});
+		temp.addEventListener('keyup', (event) => {
+			if (!(event.key === 'Enter' || event.keyCode === 13)) return;
 		});
 		temp.style.height = standardMeasure;
 		temp.style.width = standardMeasure;
@@ -201,21 +268,21 @@ for (let i = 0; i < N; i++) {
 		subArray.push(newCell);
 	}
 	cellArray.push(subArray);
+	solutionArray.push(subSol);
 }
 // Load grid
-let manuel = new AI(cellArray);
-let button = document.body.getElementsByClassName('start')[0];
-button.addEventListener('click', () => {
-	if (manuel.solvedPuzzle.length < 9) {
-		manuel.solve()
-		for(let i = 0; i < N; i++) {
-			for (let j = 0; j < N; j++) {
-				cellArray[i][j].element.setAttribute('disabled', '');
-			}
-		}
-	};
 
+let start = document.body.getElementsByClassName('start')[0];
+start.addEventListener('click', () => {
+	handler.solve()
+	for(let i = 0; i < N; i++) {
+		for (let j = 0; j < N; j++) {
+			cellArray[i][j].element.setAttribute('disabled', '');
+		}
+	}
 });
+let reset = document.body.getElementsByClassName('reset')[0];
+reset.addEventListener('click', () => handler.reset());
 window.onresize = () => {
 	height = document.body.clientHeight * H;
 	width = document.body.clientWidth;

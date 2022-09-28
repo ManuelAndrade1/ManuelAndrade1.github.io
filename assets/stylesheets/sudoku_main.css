@@ -107,3 +107,10 @@ input::-webkit-inner-spin-button {
 	background-color: rgba(0, 240, 0, 0.5);
 	color: black;
 }
+.animated {
+	animation: appear 6s linear;
+}
+@keyframes appear {
+	0% {color: transparent};
+	100% {color: black};
+}
