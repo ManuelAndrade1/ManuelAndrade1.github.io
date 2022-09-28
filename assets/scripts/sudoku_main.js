@@ -1,3 +1,5 @@
+// Iphone visual impediment
+// Numbers look cut
 const GRIDS = {
 	loadedGrids:
 			[
@@ -9,7 +11,7 @@ const GRIDS = {
 				"020005000015000000000008703051000000009700010000300046000080001700930060000000408",
 				],
 				[			
-				"",
+				"483921657967345821251876493548132976729564138136798245372689514814253769695417382",
 				"",
 				"",
 				"",
@@ -24,6 +26,110 @@ const GRIDS = {
 				],
 			],
 	load: function(diff, num){return this.loadedGrids[diff][num]},
+};
+const HELPER = {
+	findGroup: function(cord) {
+		let group1 = [0, 1 , 2];
+		let group2 = [3, 4, 5];
+		let group3 = [6, 7, 8];
+		if (group1.includes(cord)) return group1;
+		else if (group2.includes(cord)) return group2;
+		else return group3;
+	},
+	numsTaken: function(puzzle, row, col, groupRow, groupCol){
+		let nums = new Set();
+		for(let i = 0; i < N; i++) {
+			nums.add(puzzle[i][col].value);
+			nums.add(puzzle[row][i].value);
+		}
+		for(i of groupRow) {
+			for(j of groupCol) {
+				nums.add(puzzle[i][j].value);
+				if (i === row && j === col)
+					nums.delete(puzzle[i][j].value);
+			}
+		}
+		nums.delete(0);
+		return nums;
+	},
+	numsAvailable: function(unavailable) {
+		let available = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		for (n of unavailable) {
+			available.delete(n);
+		}
+		return available;
+	},
+	cellValidation: function(cell, unavailable){
+		return (unavailable.has(cell.value)) ? false : true;
+	},
+	puzzleSolved: function(puzzle) {
+		for(let i = 0; i < N; i++){
+			for(let j = 0; j < N; j++) {
+				let cell = puzzle[i][j];
+				if (cell.value === 0) return false;
+				let valid = HELPER.cellValidation(cell, 
+					HELPER.numsTaken(puzzle, i, j,
+					 HELPER.findGroup(i), HELPER.findGroup(j)));
+				if (valid) continue;
+				else return false;
+			}
+		}
+		return true;
+	},
+	getCell: function(puzzle) {
+		// Returns most suitable empty cell
+		let empty = [];
+		let emptyNumsTaken = [];
+		for(let i = 0; i < N; i++){
+			for(let j=0; j < N; j++) {
+				if (puzzle[i][j].value === 0){
+					let knownNums = HELPER.numsTaken(puzzle, i, j,
+						HELPER.findGroup(i), HELPER.findGroup(j));
+					empty.push(puzzle[i][j]);
+					emptyNumsTaken.push(knownNums.size);
+				}
+			}
+		}
+		let transform = [...emptyNumsTaken];
+		let max = Math.max(...transform);
+		let index = transform.indexOf(max);
+		return empty[index];
+	}
+}
+class AI {
+	constructor(puzzle) {
+		this.puzzle = puzzle;
+		this.solvedPuzzle = [];
+	}
+	solve() {
+		// Recursive Function
+		if (HELPER.puzzleSolved(this.puzzle)) {
+			return true;
+		}
+		let cell = HELPER.getCell(this.puzzle);
+		let available = HELPER.numsAvailable(HELPER.numsTaken(
+						this.puzzle, cell.row, cell.col,
+						HELPER.findGroup(cell.row), HELPER.findGroup(cell.col)));
+		for(let a of available) {
+			cell.value = a;
+			cell.element.value = a;
+			cell.element.classList.add('temp-solution');
+			let results = this.solve();
+			if (results) {
+				this.solvedPuzzle = this.puzzle;
+				cell.element.classList.remove('temp-solution');
+				cell.element.classList.add('solution');
+				return true;
+			}
+			else {
+				cell.value = 0;
+				cell.element.value = 0;
+				cell.element.classList.remove('temp-solution');
+				continue;
+			}
+		}
+		return false;
+	}
 }
 class Cell {
 	constructor(element, row, col, value=0) {
@@ -97,6 +203,19 @@ for (let i = 0; i < N; i++) {
 	cellArray.push(subArray);
 }
 // Load grid
+let manuel = new AI(cellArray);
+let button = document.body.getElementsByClassName('start')[0];
+button.addEventListener('click', () => {
+	if (manuel.solvedPuzzle.length < 9) {
+		manuel.solve()
+		for(let i = 0; i < N; i++) {
+			for (let j = 0; j < N; j++) {
+				cellArray[i][j].element.setAttribute('disabled', '');
+			}
+		}
+	};
+
+});
 window.onresize = () => {
 	height = document.body.clientHeight * H;
 	width = document.body.clientWidth;
@@ -116,3 +235,6 @@ window.onresize = () => {
 		};
 	};
 };
+
+
+
