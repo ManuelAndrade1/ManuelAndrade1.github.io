@@ -32,7 +32,7 @@ const GRIDS = {
 				"",
 				"",
 				"",
-				"",
+				"327695184815473629946128753651842397439756812278319546563284971784931265192567438",
 				],
 				[			
 				"",
@@ -200,7 +200,7 @@ class Cell {
 
 function validateInput(obj) {
 	//Validates user input
-	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : '';
+	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
 }
 const SIZE = 81; // Total number of cells in the grid
 const N = 9; // Amount of rows & cols
@@ -260,6 +260,15 @@ for (let i = 0; i < N; i++) {
 		});
 		temp.addEventListener('keyup', (event) => {
 			if (!(event.key === 'Enter' || event.keyCode === 13)) return;
+			if (newCell.element.value == handler.solvedPuzzle[newCell.row][newCell.col]){
+				newCell.element.setAttribute('disabled', '');
+				newCell.element.classList.add('solution');
+			}
+			else {
+				newCell.value = 0;
+				newCell.element.value = '';
+			}
+
 		});
 		temp.style.height = standardMeasure;
 		temp.style.width = standardMeasure;
