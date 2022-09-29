@@ -35,18 +35,18 @@ const GRIDS = {
 				"327695184815473629946128753651842397439756812278319546563284971784931265192567438",
 				],
 				[			
-				"",
-				"",
-				"",
-				"",
-				"",
+				"491782356632945187875136492729514863184367529563829714357691248216478935948253671",
+				"547839216138627954962514738793286145256341897481795623674152389325978461819463572",
+				"429173856318526974567498132284637519791854623635219487952741368146382795873965241",
+				"413958267678231954952674813736482591184593726529167348267315489395846172841729635",
+				"731845926256397814894612735463189257578234691129576483942753168317968542685421379",
 				],
 				[			
-				"",
-				"",
-				"",
-				"",
-				"",
+				"269438751438517962571926438347852619916374285825691374692785143783149526154263897",
+				"678451239125369874934287516867135942591824367342976185453712698219648753786593421",
+				"194862375827345169365197248258473916913256784476981523749518632531624897682739451",
+				"379462185521798364648351729814679253752134698936285417493826571287513946165947832",
+				"278139456349675812156428973867954231934712568512863794791286345685347129423591687",
 				],
 			],
 	load: function(diff, num){return this.loadedGrids[diff][num]},
@@ -136,6 +136,7 @@ class AI {
 	constructor(puzzle, solvedPuzzle) {
 		this.puzzle = puzzle;
 		this.solvedPuzzle = solvedPuzzle;
+		this.speed = 30; 
 		this.tries = 0;
 	}
 	reset() {
@@ -171,7 +172,7 @@ class AI {
 			https://thewebdev.info/2022/05/15/how-to-get-return-value-from-settimeout-with-javascript/ 
 			*/
 			let promise = new Promise((resolve, reject) => {
-				setTimeout(() =>{resolve(this.solve())}, 20);
+				setTimeout(() =>{resolve(this.solve())}, this.speed);
 			});
 			let results = await(promise);
 			if (results) {
@@ -239,6 +240,12 @@ will be made considering width / N.
 let container = document.getElementsByClassName('container')[0];
 let selectDiff = document.getElementsByName('difficulty')[0];
 let selectPuzzle = document.getElementsByName('puzzles')[0];
+let selectSpeed = document.getElementsByName('speed')[0];
+let menuButton = document.getElementsByClassName('menu-button')[0];
+let nav = document.querySelector('nav');
+menuButton.addEventListener('click', () => {
+	nav.style.visibility = (nav.style.visibility === 'hidden') ? 'visible' : 'hidden';
+})
 container.style.width = (width > height) ? height : width;
 container.style.height = (width > height) ? height : width;
 // Creates repeating measure for inner cell size (width x height)
@@ -255,6 +262,7 @@ let game = GRIDS.load(...loadingParams);
 let solution = GRIDS.loadSolve(...loadingParams);
 selectDiff.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
 selectPuzzle.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
+selectSpeed.addEventListener('change', () => handler.speed = parseInt(selectSpeed.value));
 
 let solutionArray = [];
 let cellArray = [];

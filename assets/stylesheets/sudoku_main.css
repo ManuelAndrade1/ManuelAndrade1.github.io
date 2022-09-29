@@ -57,7 +57,7 @@ table {
 	text-align: center;
 	font-size: 48px;
 	height: 20%;
-	background-color: rgba(200, 0, 0, 0.1);
+	background-color: rgba(255, 255, 0, 0.3);
 }
 .title h1, h2 {
 	padding: 10px 0px 5px 0px;
@@ -74,9 +74,23 @@ table {
 
 .nav-section {
 	position: absolute;
-	background-color: rgba(0, 200, 0, 0.1);
+	background-color: rgba(255, 255, 0, 0.7);
+	height: 100%;
+	width: 40%;
+	z-index: 0;
+	top: 0;
 }
+li {
+	margin-left: 5%;
 
+}
+li > select {
+	margin-top: 15px;
+}
+i {
+	visibility: visible !important;
+	font-size: 50px;
+}
 .container {
 	margin: auto;
 	margin-top: 1.25%;
@@ -87,6 +101,9 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 	-moz-appearance: none;
+}
+select {
+	font-size: 30px;
 }
 .cell {
 	border: 1px solid black;
