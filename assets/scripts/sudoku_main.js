@@ -143,16 +143,19 @@ class AI {
 		this.tries = 0;
 		for(let i = 0; i < N; i++){
 			for(let j = 0; j < N; j++){
-				let list = [...this.puzzle[i][j].element.classList];
-				if(list.includes('solution')){
-					this.puzzle[i][j].element.value = '';
-					this.puzzle[i][j].element.classList.remove('solution');
-					this.puzzle[i][j].element.removeAttribute('disabled');
-					this.puzzle[i][j].value = 0;
+				let defValue = parseInt(game[N * i + j]);
+				this.puzzle[i][j].element.value = '';
+				this.puzzle[i][j].element.classList.remove('solution');
+				this.puzzle[i][j].element.removeAttribute('disabled');
+				this.puzzle[i][j].value = 0;
+				if(!(defValue === 0)) {
+					this.puzzle[i][j].element.setAttribute('disabled','');
+					this.puzzle[i][j].element.value = defValue;
+					this.puzzle[i][j].value = defValue;
 				}
 			}
-		}		
-	}
+		}
+	}	
 	async solve() {
 		this.tries++;
 		// Recursive Function
@@ -198,22 +201,24 @@ class Cell {
 		this.value = value;
 	}
 }
-
-function validateInput(obj) {
-	//Validates user input
-	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
-}
-function reload(unsolved, solved, diff, num){
+// Disabled mommentarily:
+// Updating cellArray value without user pressing ENTER interferes
+// with algorithm resolution of the grid.
+// function validateInput(obj) {
+// 	//Validates user input
+// 	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
+// }
+function reload(diff, num){
 	let loading = [parseInt(diff.value), parseInt(num.value)];
-	unsolved = GRIDS.load(...loading);
-	solved = GRIDS.loadSolve(...loading);
+	game = GRIDS.load(...loading);
+	solution = GRIDS.loadSolve(...loading);
 	for(let i = 0; i < N; i++) {
 		for(let j = 0; j < N; j++){
 			let cell = cellArray[i][j];
 			cell.element.removeAttribute('disabled');
 			cell.element.classList.remove('solution','temp-solution');
-			let loadedValue = parseInt(unsolved[i * N + j]);
-			solutionArray[i][j] = parseInt(solved[i * N + j]);
+			let loadedValue = parseInt(game[i * N + j]);
+			solutionArray[i][j] = parseInt(solution[i * N + j]);
 			cell.value = loadedValue;
 			if (loadedValue) {
 				cell.element.value = loadedValue;
@@ -260,8 +265,8 @@ container.style.gridTemplateRows = fString;
 let loadingParams = [parseInt(selectDiff.value), parseInt(selectPuzzle.value)];
 let game = GRIDS.load(...loadingParams);
 let solution = GRIDS.loadSolve(...loadingParams);
-selectDiff.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
-selectPuzzle.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
+selectDiff.addEventListener('change', () => reload(selectDiff, selectPuzzle));
+selectPuzzle.addEventListener('change', () => reload(selectDiff, selectPuzzle));
 selectSpeed.addEventListener('change', () => handler.speed = parseInt(selectSpeed.value));
 
 let solutionArray = [];
@@ -286,7 +291,7 @@ for (let i = 0; i < N; i++) {
 		temp.setAttribute('type', 'number');
 		temp.setAttribute('max','9');
 		temp.setAttribute('min', '1');
-		temp.addEventListener('focusout', () => validateInput(newCell));
+		// temp.addEventListener('focusout', () => validateInput(newCell));
 		temp.addEventListener('keydown', (event) => {
 			let notValid = (event.key === "0" || event.key === "e" || event.key === "-" || event.key === ".");
 			if (notValid) event.preventDefault();
