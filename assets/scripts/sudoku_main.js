@@ -11,27 +11,27 @@ const GRIDS = {
 				"020005000015000000000008703051000000009700010000300046000080001700930060000000408",
 				],
 				[			
-				"483921657967345821251876493548132976729564138136798245372689514814253769695417382",
-				"",
-				"",
-				"",
-				"",
+				"000000050030000080875006002700004803084060000063829000300000200200400035040250670",
+				"047039006130027000900010000000086005250040890001090023600100309000078000009000002",
+				"009070800000520904560400000200630509091800020000009000050700068000000090073905200",
+				"000008007000231004000000800730482500004093000520007000060005400005000072800720605",
+				"000800020006307004004000005000080207508000600009500003042003060007060042085420070",
 				],
 				[			
-				"",
-				"",
-				"",
-				"",
-				"",
+				"000400750008000000000006400047050000000300280025000300092700000000009006050063007",
+				"070001200105000000000200506007000940000024007300070000003000008209640000080090001",
+				"000062000027300000305090000200003006900050080070980500040000602030000007000700050",
+				"000000005520000060008300709004070050000034608000080017003020000200500940060900000",
+				"078000406000000000050020003007950000030700060000800090000006005080300020403500087",
 				],
 			],
 	solvedGrids: 
 			[
 				[
-				"",
-				"",
-				"",
-				"",
+				"794268153283541976516379284671984325425637819938125467359816742142753698867492531",
+				"415387962928516374763492185284169753396754218157823496831275649672948531549631827",
+				"483921657967345821251876493548132976729564138136798245372689514814253769695417382",
+				"924715863815369742367284159578621394431957628692843571159478236283596417746132985",
 				"327695184815473629946128753651842397439756812278319546563284971784931265192567438",
 				],
 				[			
@@ -202,6 +202,26 @@ function validateInput(obj) {
 	//Validates user input
 	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
 }
+function reload(unsolved, solved, diff, num){
+	let loading = [parseInt(diff.value), parseInt(num.value)];
+	unsolved = GRIDS.load(...loading);
+	solved = GRIDS.loadSolve(...loading);
+	for(let i = 0; i < N; i++) {
+		for(let j = 0; j < N; j++){
+			let cell = cellArray[i][j];
+			cell.element.removeAttribute('disabled');
+			cell.element.classList.remove('solution','temp-solution');
+			let loadedValue = parseInt(unsolved[i * N + j]);
+			solutionArray[i][j] = parseInt(solved[i * N + j]);
+			cell.value = loadedValue;
+			if (loadedValue) {
+				cell.element.value = loadedValue;
+				cell.element.setAttribute('disabled', '');
+			}
+			else cell.element.value = '';
+		}
+	}
+}
 const SIZE = 81; // Total number of cells in the grid
 const N = 9; // Amount of rows & cols
 const H = .75; // Window height percentage to use
@@ -217,6 +237,8 @@ will be made considering width / N.
 */
 
 let container = document.getElementsByClassName('container')[0];
+let selectDiff = document.getElementsByName('difficulty')[0];
+let selectPuzzle = document.getElementsByName('puzzles')[0];
 container.style.width = (width > height) ? height : width;
 container.style.height = (width > height) ? height : width;
 // Creates repeating measure for inner cell size (width x height)
@@ -228,8 +250,12 @@ container.style.gridTemplateColumns = fString;
 container.style.gridTemplateRows = fString;
 
 // Creates array of Cells
-let game = GRIDS.load(0, 4);
-let solution = GRIDS.loadSolve(0, 4);
+let loadingParams = [parseInt(selectDiff.value), parseInt(selectPuzzle.value)];
+let game = GRIDS.load(...loadingParams);
+let solution = GRIDS.loadSolve(...loadingParams);
+selectDiff.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
+selectPuzzle.addEventListener('change', () => reload(game, solution, selectDiff, selectPuzzle));
+
 let solutionArray = [];
 let cellArray = [];
 let handler = new AI(cellArray, solutionArray);
