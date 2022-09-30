@@ -293,9 +293,6 @@ for (let i = 0; i < N; i++) {
 		temp.setAttribute('min', '1');
 		// temp.addEventListener('focusout', () => validateInput(newCell));
 		temp.addEventListener('keydown', (event) => {
-			color = container.style.backgroundColor;
-			color = (color === 'rgb(255, 0, 0)') ? 'rgb(255, 255, 255)' : 'rgb(255, 0, 0)'; 
-			container.style.backgroundColor = color;
 			let notValid = (event.key === "0" || event.key === "e" || event.key === "-" || event.key === ".");
 			if (notValid) event.preventDefault();
 			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
