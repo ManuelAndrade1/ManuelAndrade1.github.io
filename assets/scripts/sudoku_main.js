@@ -293,12 +293,13 @@ for (let i = 0; i < N; i++) {
 		temp.setAttribute('min', '1');
 		// temp.addEventListener('focusout', () => validateInput(newCell));
 		temp.addEventListener('keydown', (event) => {
+			if(event.keyCode === 13) container.style.backgroundColor = 'rgb(255, 0, 0)';
 			let notValid = (event.key === "0" || event.key === "e" || event.key === "-" || event.key === ".");
 			if (notValid) event.preventDefault();
 			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
 		});
 		temp.addEventListener('keyup', (event) => {
-			if (!(event.key === 'Enter' || event.keyCode === 13 || event.keyCode == event.key.KEYCODE_ENTER)) return;
+			if (!(event.key === 'Enter' || event.keyCode === 13)) return;
 			if (newCell.element.value == handler.solvedPuzzle[newCell.row][newCell.col]){
 				newCell.element.setAttribute('disabled', '');
 				newCell.element.classList.add('solution');
