@@ -58,20 +58,20 @@ table {
 	font-size: 48px;
 	height: 20%;
 	background-color: rgba(255, 255, 0, 0.3);
-}
-.title h1, h2 {
-	padding: 10px 0px 5px 0px;
+	display: flex;
+	flex-direction: column;
 }
 .title h1 {
+	padding: 10px 0px 5px 0px;
 }
 .title h2 {
 	font-size: 0.6em;
-	padding-bottom: 20px;
+	width: fit-content;
+	margin: auto;
+	margin-top: 20px !important;
+	margin-bottom: 10px !important;
+	color: rgb(100, 100, 100);
 }
-.title button {
-	font-size: 0.5em;
-}
-
 .nav-section {
 	position: absolute;
 	background-color: rgba(255, 255, 0, 0.7);
@@ -84,12 +84,15 @@ li {
 	margin-left: 5%;
 
 }
-li > select {
+li > select, li > button {
 	margin-top: 15px;
 }
 i {
 	visibility: visible !important;
 	font-size: 50px;
+}
+button {
+	font-size: 30px;
 }
 .container {
 	margin: auto;
@@ -123,10 +126,7 @@ select {
 	background-color: rgba(0, 240, 0, 0.5);
 	color: black;
 }
-.animated {
-	animation: appear 6s linear;
-}
-@keyframes appear {
-	0% {color: transparent};
-	100% {color: black};
-}
+
+@media only screen and (max-width: 660px) {
+	.title h2 {visibility: hidden;}
+} 
