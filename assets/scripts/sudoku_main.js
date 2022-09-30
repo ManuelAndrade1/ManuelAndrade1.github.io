@@ -298,7 +298,7 @@ for (let i = 0; i < N; i++) {
 			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
 		});
 		temp.addEventListener('keyup', (event) => {
-			if (!(event.key === 'Enter' || event.keyCode === 13)) return;
+			if (!(event.key === 'Enter' || event.keyCode === 13 || event.keyCode == KeyEvent.KEYCODE_ENTER)) return;
 			if (newCell.element.value == handler.solvedPuzzle[newCell.row][newCell.col]){
 				newCell.element.setAttribute('disabled', '');
 				newCell.element.classList.add('solution');
