@@ -248,8 +248,15 @@ let selectPuzzle = document.getElementsByName('puzzles')[0];
 let selectSpeed = document.getElementsByName('speed')[0];
 let menuButton = document.getElementsByClassName('menu-button')[0];
 let nav = document.querySelector('nav');
+let rotationNum = 90;
+let transformNum = -1000;
+nav.style.transition = 'transform 1s linear';
+menuButton.style.transition = 'transform 0.5s linear';
 menuButton.addEventListener('click', () => {
-	nav.style.visibility = (nav.style.visibility === 'hidden') ? 'visible' : 'hidden';
+	menuButton.style.transform = `rotate(${rotationNum}deg)`;
+	rotationNum = (rotationNum === 90) ? 0 : 90;
+	nav.style.transform = `translateX(${transformNum}px)`;
+	transformNum = (transformNum < 0) ? 0 : -1000;
 })
 container.style.width = (width > height) ? height : width;
 container.style.height = (width > height) ? height : width;

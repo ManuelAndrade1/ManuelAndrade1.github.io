@@ -75,10 +75,9 @@ table {
 .nav-section {
 	position: absolute;
 	background-color: rgba(255, 255, 0, 0.7);
-	height: 100%;
-	width: 40%;
-	z-index: 0;
-	top: 0;
+	height: 100vh !important;
+	width: 30%;
+	z-index: 200;
 }
 li {
 	margin-left: 5%;
@@ -88,7 +87,9 @@ li > select, li > button {
 	margin-top: 15px;
 }
 i {
-	visibility: visible !important;
+	position: absolute;
+	top: 10px;
+	left: 20px;
 	font-size: 50px;
 }
 button {
