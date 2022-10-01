@@ -62,32 +62,39 @@ const HELPER = {
 		else return group3;
 	},
 	numsTaken: function(puzzle, row, col, groupRow, groupCol){
+		// Returns unavailable numbers for a specific cell
 		let nums = new Set();
+		// Iterates over entire row & column
 		for(let i = 0; i < N; i++) {
 			nums.add(puzzle[i][col].value);
 			nums.add(puzzle[row][i].value);
 		}
+		// Iterates over group
 		for(i of groupRow) {
 			for(j of groupCol) {
 				nums.add(puzzle[i][j].value);
-				if (i === row && j === col)
+				if (i === row && j === col) // Skips the cell we are working with
 					nums.delete(puzzle[i][j].value);
 			}
 		}
-		nums.delete(0);
+		nums.delete(0); // Removes empty values from set
 		return nums;
 	},
 	numsAvailable: function(unavailable) {
+		// Returns array of available numbers for specific cell
 		let available = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 		for (n of unavailable) {
-			available.delete(n);
+			available.delete(n); // Removes unavailable numbers from set
 		}
 		return available;
 	},
 	cellValidation: function(cell, unavailable){
+		// Returns true if value is valid, false otherwise
 		return (unavailable.has(cell.value)) ? false : true;
 	},
 	puzzleSolved: function(puzzle) {
+		// Checks if sudoku puzzle has been solved
+		// Base-case for the recursive function
 		for(let i = 0; i < N; i++){
 			for(let j = 0; j < N; j++) {
 				let cell = puzzle[i][j];
@@ -115,23 +122,12 @@ const HELPER = {
 				}
 			}
 		}
-		let transform = [...emptyNumsTaken];
+		let transform = [...emptyNumsTaken]; // Why pass it to another array?
 		let max = Math.max(...transform);
 		let index = transform.indexOf(max);
 		return empty[index];
 	},
-	createEmpty: function() {
-		let arr = [];
-		for(let i = 0; i < N; i++) {
-			let subArr = [];
-			for(let j = 0; j < N; j++) {
-				subArr.push(0);
-			}
-			arr.push(subArr);
-		}
-	return arr;
-	}
-}
+};
 class AI {
 	constructor(puzzle, solvedPuzzle) {
 		this.puzzle = puzzle;
@@ -140,7 +136,7 @@ class AI {
 		this.tries = 0;
 	}
 	reset() {
-		this.tries = 0;
+		this.tries = 0; // Resets recursion attempts
 		for(let i = 0; i < N; i++){
 			for(let j = 0; j < N; j++){
 				let defValue = parseInt(game[N * i + j]);
@@ -162,14 +158,15 @@ class AI {
 		if (HELPER.puzzleSolved(this.puzzle)) {
 			return true;
 		}
-		let cell = HELPER.getCell(this.puzzle);
+		let cell = HELPER.getCell(this.puzzle); // Gets cell from function
 		let available = HELPER.numsAvailable(HELPER.numsTaken(
 						this.puzzle, cell.row, cell.col,
 						HELPER.findGroup(cell.row), HELPER.findGroup(cell.col)));
 		for(let a of available) {
-			cell.value = a;
-			cell.element.value = a;
-			cell.element.classList.add('temp-solution');
+			// Iterates over available numbers
+			cell.value = a; // Updates cell value
+			cell.element.value = a; // Updates cell element value
+			cell.element.classList.add('temp-solution'); 
 			/*
 			The following code is based on the example here
 			https://thewebdev.info/2022/05/15/how-to-get-return-value-from-settimeout-with-javascript/ 
@@ -177,7 +174,8 @@ class AI {
 			let promise = new Promise((resolve, reject) => {
 				setTimeout(() =>{resolve(this.solve())}, this.speed);
 			});
-			let results = await(promise);
+			// Waits for promise results, resolve means the puzzle was solved, reject means it wasn't
+			let results = await(promise); 
 			if (results) {
 				cell.element.classList.remove('temp-solution');
 				cell.element.classList.add('solution');
@@ -190,28 +188,24 @@ class AI {
 				continue;
 			}
 		}
+		// If available nums don't get to solution, returns false so algorithm can backtrack.
 		return false;
 	}
 }
 class Cell {
 	constructor(element, row, col, value=0) {
-		this.element = element;
+		this.element = element;  // Corresponding HTML element
 		this.row = row;
 		this.col = col;
 		this.value = value;
 	}
 }
-// Disabled mommentarily:
-// Updating cellArray value without user pressing ENTER interferes
-// with algorithm resolution of the grid.
-// function validateInput(obj) {
-// 	//Validates user input
-// 	obj.value = (parseInt(obj.element.value)) ? parseInt(obj.element.value) : 0;
-// }
 function reload(diff, num){
-	let loading = [parseInt(diff.value), parseInt(num.value)];
-	game = GRIDS.load(...loading);
-	solution = GRIDS.loadSolve(...loading);
+	// Reloads grid when user changes either puzzle num or difficulty
+	let loading = [parseInt(diff.value), parseInt(num.value)]; // [difficulty, puzzle number]
+	game = GRIDS.load(...loading); // Reloads unsolved game
+	solution = GRIDS.loadSolve(...loading); // Reloads solution
+	// Handles reloading for the objects and HTMl elements
 	for(let i = 0; i < N; i++) {
 		for(let j = 0; j < N; j++){
 			let cell = cellArray[i][j];
@@ -233,6 +227,8 @@ const N = 9; // Amount of rows & cols
 const H = .75; // Window height percentage to use
 let height = document.body.clientHeight * H; // Gets 75% of client height
 let width = document.body.clientWidth; // Gets the same amount of width as height
+let rotationNum = 90;
+let transformNum = -1000;
 
 /*
 The following comprehensive conditional assignments are made to allow responsiveness
@@ -242,23 +238,25 @@ larger than the width (case of mobile phones for instance), the standardMeasure 
 will be made considering width / N.
 */
 
-let container = document.getElementsByClassName('container')[0];
-let selectDiff = document.getElementsByName('difficulty')[0];
+let container = document.getElementsByClassName('container')[0]; // grid container
+let selectDiff = document.getElementsByName('difficulty')[0]; 
 let selectPuzzle = document.getElementsByName('puzzles')[0];
 let selectSpeed = document.getElementsByName('speed')[0];
 let menuButton = document.getElementsByClassName('menu-button')[0];
 let nav = document.querySelector('nav');
-let rotationNum = 90;
-let transformNum = -1000;
+
 nav.style.transition = 'transform 1s linear';
 menuButton.style.transition = 'transform 0.5s linear';
+// When menu button clicked, it rotates icon and hides menu.
 menuButton.addEventListener('click', () => {
 	menuButton.style.transform = `rotate(${rotationNum}deg)`;
 	rotationNum = (rotationNum === 90) ? 0 : 90;
 	nav.style.transform = `translateX(${transformNum}px)`;
 	transformNum = (transformNum < 0) ? 0 : -1000;
 })
-container.style.width = (width > height) ? height : width;
+// Container size will depend on height if width is greater than height, otherwise it will
+// depend on width.
+container.style.width = (width > height) ? height : width; 
 container.style.height = (width > height) ? height : width;
 // Creates repeating measure for inner cell size (width x height)
 let standardMeasure = (width > height) ? height / N : width / N;
@@ -269,9 +267,10 @@ container.style.gridTemplateColumns = fString;
 container.style.gridTemplateRows = fString;
 
 // Creates array of Cells
-let loadingParams = [parseInt(selectDiff.value), parseInt(selectPuzzle.value)];
+let loadingParams = [parseInt(selectDiff.value), parseInt(selectPuzzle.value)]; // [difficulty, puzzle number]
 let game = GRIDS.load(...loadingParams);
 let solution = GRIDS.loadSolve(...loadingParams);
+// Event listeners to detect changes in select input fields
 selectDiff.addEventListener('change', () => reload(selectDiff, selectPuzzle));
 selectPuzzle.addEventListener('change', () => reload(selectDiff, selectPuzzle));
 selectSpeed.addEventListener('change', () => handler.speed = parseInt(selectSpeed.value));
@@ -280,14 +279,14 @@ let solutionArray = [];
 let cellArray = [];
 let handler = new AI(cellArray, solutionArray);
 for (let i = 0; i < N; i++) {
-	let subArray = [];
-	let subSol = [];
+	let subArray = []; // Create subarray for Cell arrays
+	let subSol = []; // Create subarray for solution numbers
 	for (let j = 0; j < N; j++) {
-		let temp = document.createElement('input');
-		let solValue = parseInt(solution[i * N + j]);
+		let temp = document.createElement('input'); // create HTML element
+		let solValue = parseInt(solution[i * N + j]); // get solution number for cell at (i, j)
 		subSol.push(solValue);
 		// Loads the Sudoku puzzle onto the screen
-		let loadedValue = parseInt(game[i * N + j]);
+		let loadedValue = parseInt(game[i * N + j]); // get number from unsolved array
 		if (loadedValue) {
 			temp.setAttribute('disabled', '');
 			temp.value = loadedValue;
@@ -298,15 +297,17 @@ for (let i = 0; i < N; i++) {
 		temp.setAttribute('type', 'number');
 		temp.setAttribute('max','9');
 		temp.setAttribute('min', '1');
-		// temp.addEventListener('focusout', () => validateInput(newCell));
+		// Event listener to reject 0 / e / - or . inputs
 		temp.addEventListener('keydown', (event) => {
 			let notValid = (event.key === "0" || event.key === "e" || event.key === "-" || event.key === ".");
-			if (notValid) event.preventDefault();
-			if (temp.value !== "" && parseInt(event.key)) temp.value = '';
+			if (notValid) event.preventDefault(); // Prevent input from updating the element
+			if (temp.value !== "" && parseInt(event.key)) temp.value = ''; 
 		});
+		// Event listener to look for ENTER key 
 		temp.addEventListener('keyup', (event) => {
-			if (!(event.key === 'Enter' || event.keyCode === 13)) return;
+			if (!(event.key === 'Enter' || event.keyCode === 13)) return; // if key is not enter, return
 			if (newCell.element.value == handler.solvedPuzzle[newCell.row][newCell.col]){
+			// If input is in solution, mark as correct 
 				newCell.element.setAttribute('disabled', '');
 				newCell.element.classList.add('solution');
 			}
@@ -316,10 +317,11 @@ for (let i = 0; i < N; i++) {
 			}
 
 		});
+		// Set common measures for cell width, height & fontisze
 		temp.style.height = standardMeasure;
 		temp.style.width = standardMeasure;
 		temp.style.fontSize = `${standardMeasure * H}px`;
-		container.appendChild(temp);
+		container.appendChild(temp); // append child to the DOM
 		subArray.push(newCell);
 	}
 	cellArray.push(subArray);
@@ -327,20 +329,26 @@ for (let i = 0; i < N; i++) {
 }
 // Load grid
 
-let start = document.body.getElementsByClassName('start')[0];
+let start = document.body.getElementsByClassName('start')[0]; // 'START SOLVING' button
 start.addEventListener('click', () => {
+	// If clicked, start solving
 	handler.solve()
+	// After solving, disable all input fields so user cannot change the answer
 	for(let i = 0; i < N; i++) {
 		for (let j = 0; j < N; j++) {
 			cellArray[i][j].element.setAttribute('disabled', '');
 		}
 	}
 });
-let reset = document.body.getElementsByClassName('reset')[0];
-reset.addEventListener('click', () => handler.reset());
+let reset = document.body.getElementsByClassName('reset')[0]; // 'RESET GRID' button 
+reset.addEventListener('click', () => handler.reset()); // Resets grid if clicked
+
+// Function to handle window resizing, adding responsiveness to the grid.
 window.onresize = () => {
+	// Get height and width again
 	height = document.body.clientHeight * H;
 	width = document.body.clientWidth;
+	// Update everything that uses the client's width and height
 	standardMeasure = (width > height) ? height / N : width / N;
 	fString = `repeat(${N}, ${standardMeasure}px)`;
 	container.style.gridTemplateColumns = fString;
